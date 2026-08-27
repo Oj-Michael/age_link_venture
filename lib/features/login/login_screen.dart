@@ -134,16 +134,16 @@ class _HeroPanel extends StatelessWidget {
         children: [
           if (!compact) const Spacer(),
           Text(
-            'Command Center',
+            'General Operational Hub',
             style: TextStyle(
               color: Colors.white,
-              fontSize: compact ? 28 : 42,
+              fontSize: compact ? 28 : 62,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            'Monitor lending, collections, and repayments in real time — all in one place.',
+            'Monitor lending, collections, and repayments.',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.85),
               fontSize: compact ? 14 : 18,
@@ -237,7 +237,7 @@ class _LoginForm extends StatelessWidget {
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
-                  'AgeLink Venture',
+                  'Age Link Venture',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
@@ -257,7 +257,7 @@ class _LoginForm extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: const Text(
-              'Owner Portal',
+              'Operations Portal',
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,
@@ -276,7 +276,7 @@ class _LoginForm extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Sign in to your owner dashboard',
+            'Sign in to your account',
             style: TextStyle(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 24),
