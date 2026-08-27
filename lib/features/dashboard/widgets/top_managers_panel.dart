@@ -172,31 +172,47 @@ class ReconciliationPanel extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        _ReconRow(
-          label: 'AM collections',
-          value: snapshot.collected,
-          color: AppColors.primary,
-          max: snapshot.collected,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _ReconMetric(
+                label: 'AM collections',
+                value: formatCurrency(snapshot.collected),
+                color: AppColors.primary,
+                fraction: 1.0,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _ReconMetric(
+                label: 'Bank credits',
+                value: formatCurrency(snapshot.bankCredits),
+                color: AppColors.success,
+                fraction: snapshot.collected > 0
+                    ? snapshot.bankCredits / snapshot.collected
+                    : 0,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _ReconMetric(
+                label: 'Unreconciled',
+                value: formatCurrency(snapshot.unreconciled),
+                color: AppColors.danger,
+                fraction: snapshot.collected > 0
+                    ? snapshot.unreconciled / snapshot.collected
+                    : 0,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 14),
-        _ReconRow(
-          label: 'Bank credits',
-          value: snapshot.bankCredits,
-          color: AppColors.success,
-          max: snapshot.collected,
-        ),
-        const SizedBox(height: 14),
-        _ReconRow(
-          label: 'Unreconciled',
-          value: snapshot.unreconciled,
-          color: AppColors.danger,
-          max: snapshot.collected,
-        ),
-        if (hasIssue) ...[
-          const SizedBox(height: 16),
+        const SizedBox(height: 12),
+        if (hasIssue)
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.danger.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8),
@@ -204,75 +220,75 @@ class ReconciliationPanel extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.warning_amber_rounded, color: AppColors.danger, size: 20),
-                const SizedBox(width: 10),
+                const Icon(Icons.warning_amber_rounded,
+                    color: AppColors.danger, size: 18),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '${formatCurrency(snapshot.unreconciled)} needs reconciliation review.',
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppColors.danger,
-                      fontSize: 13,
+                      fontSize: 12,
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-        ] else ...[
-          const SizedBox(height: 16),
+          )
+        else
           Row(
             children: [
-              Icon(Icons.check_circle, color: AppColors.success, size: 20),
+              Icon(Icons.check_circle, color: AppColors.success, size: 18),
               const SizedBox(width: 8),
               Text(
                 'Collections aligned with bank credits',
                 style: TextStyle(
                   color: AppColors.success,
                   fontWeight: FontWeight.w600,
-                  fontSize: 13,
+                  fontSize: 12,
                 ),
               ),
             ],
           ),
-        ],
       ],
     );
   }
 }
 
-class _ReconRow extends StatelessWidget {
-  const _ReconRow({
+class _ReconMetric extends StatelessWidget {
+  const _ReconMetric({
     required this.label,
     required this.value,
     required this.color,
-    required this.max,
+    required this.fraction,
   });
 
   final String label;
-  final double value;
+  final String value;
   final Color color;
-  final double max;
+  final double fraction;
 
   @override
   Widget build(BuildContext context) {
-    final fraction = max > 0 ? (value / max).clamp(0.0, 1.0) : 0.0;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(child: Text(label, style: AppTextStyles.chartAxisLabel)),
-            Text(formatCurrency(value), style: AppTextStyles.tableCell),
-          ],
+        Text(label, style: AppTextStyles.chartAxisLabel),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: AppTextStyles.tableCell.copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
-            value: fraction,
-            minHeight: 8,
+            value: fraction.clamp(0, 1),
+            minHeight: 6,
             backgroundColor: AppColors.border,
             color: color,
           ),

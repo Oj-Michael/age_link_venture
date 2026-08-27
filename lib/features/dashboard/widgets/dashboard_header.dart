@@ -94,14 +94,21 @@ class _FilterCluster extends StatelessWidget {
             child: DropdownButtonFormField<String?>(
               initialValue: selectedManagerId,
               isDense: true,
+              isExpanded: true,
               decoration: const InputDecoration(
                 labelText: 'Account Manager',
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('All managers')),
+                const DropdownMenuItem(
+                  value: null,
+                  child: Text('All managers', overflow: TextOverflow.ellipsis),
+                ),
                 ...managers.map(
-                  (m) => DropdownMenuItem(value: m.id, child: Text(m.name)),
+                  (m) => DropdownMenuItem(
+                    value: m.id,
+                    child: Text(m.name, overflow: TextOverflow.ellipsis),
+                  ),
                 ),
               ],
               onChanged: onManagerChanged,

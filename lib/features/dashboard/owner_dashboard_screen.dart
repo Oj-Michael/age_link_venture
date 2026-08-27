@@ -152,7 +152,7 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
                 onManagerTap: (id) => context.go('/managers/$id/customers'),
                 onViewAllManagers: () => context.go('/managers'),
               )
-            else
+            else ...[
               SizedBox(
                 height: 380,
                 child: Row(
@@ -171,31 +171,24 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       flex: 2,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: DashboardCard(
-                              title: "Today's Breakdown",
-                              subtitle: 'Collection attainment',
-                              expandContent: true,
-                              child: CollectionRateChart(snapshot: snapshot),
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          Expanded(
-                            child: DashboardCard(
-                              title: 'Reconciliation',
-                              subtitle: 'Collections vs bank',
-                              expandContent: true,
-                              child: ReconciliationPanel(snapshot: snapshot),
-                            ),
-                          ),
-                        ],
+                      child: DashboardCard(
+                        title: "Today's Breakdown",
+                        subtitle: 'Collection attainment',
+                        contentGap: AppSpacing.md,
+                        expandContent: true,
+                        child: CollectionRateChart(snapshot: snapshot),
                       ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: AppSpacing.md),
+              DashboardCard(
+                title: 'Reconciliation',
+                subtitle: 'Collections vs bank deposits',
+                child: ReconciliationPanel(snapshot: snapshot),
+              ),
+            ],
             const SizedBox(height: AppSpacing.md),
             if (!isCompact)
               IntrinsicHeight(
@@ -231,7 +224,7 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
                                 customers: overdue,
                                 store: _store,
                                 onCustomerTap: (id) =>
-                                    context.go('/customers/$id'),
+                                    context.push('/customers/$id'),
                               ),
                       ),
                     ),

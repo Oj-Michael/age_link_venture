@@ -40,7 +40,7 @@ class CustomerDetailScreen extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                  onPressed: () => context.pop(),
+                  onPressed: () => _navigateBack(context, customer.managerId),
                   icon: const Icon(Icons.arrow_back),
                 ),
                 Expanded(
@@ -159,6 +159,14 @@ class CustomerDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _navigateBack(BuildContext context, String managerId) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    context.go('/managers/$managerId/customers');
   }
 
   String _statusLabel(CustomerStatus status) {

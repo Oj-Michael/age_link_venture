@@ -380,7 +380,7 @@ class _ManagerCustomersScreenState extends State<ManagerCustomersScreen> {
               child: _CustomerTable(
                 customers: customers,
                 store: _store,
-                onCustomerTap: (id) => context.go('/customers/$id'),
+                onCustomerTap: (id) => context.push('/customers/$id'),
               ),
             ),
           ],
