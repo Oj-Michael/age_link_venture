@@ -14,11 +14,6 @@ class CollectionRateChart extends StatelessWidget {
     return (value / total * 100).round();
   }
 
-  static int _flexWeight(double value, double total) {
-    if (total <= 0 || value <= 0) return 0;
-    return (value / total * 1000).round().clamp(1, 1000);
-  }
-
   @override
   Widget build(BuildContext context) {
     final expected = snapshot.expected;
@@ -39,6 +34,7 @@ class CollectionRateChart extends StatelessWidget {
         snapshot.outstanding.clamp(0, expected).toDouble();
     final unreconciled =
         snapshot.unreconciled.clamp(0, collected).toDouble();
+    final verifiedCollected = collected - unreconciled;
 
     final rows = <_ValueRowData>[
       _ValueRowData(
@@ -99,42 +95,12 @@ class CollectionRateChart extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: SizedBox(
-                height: 24,
-                child: Row(
-                  children: [
-                    if (collected > 0)
-                      Expanded(
-                        flex: _flexWeight(collected, expected),
-                        child: ClipRRect(
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              const ColoredBox(color: AppColors.success),
-                              if (unreconciled > 0)
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: FractionallySizedBox(
-                                    widthFactor:
-                                        unreconciled / (collected > 0 ? collected : 1),
-                                    child:
-                                        const ColoredBox(color: AppColors.danger),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    if (outstanding > 0)
-                      Expanded(
-                        flex: _flexWeight(outstanding, expected),
-                        child: const ColoredBox(color: AppColors.warning),
-                      ),
-                  ],
-                ),
-              ),
+            _AttainmentBar(
+              width: constraints.maxWidth,
+              expected: expected,
+              verifiedCollected: verifiedCollected,
+              unreconciled: unreconciled,
+              outstanding: outstanding,
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -162,6 +128,71 @@ class CollectionRateChart extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _AttainmentBar extends StatelessWidget {
+  const _AttainmentBar({
+    required this.width,
+    required this.expected,
+    required this.verifiedCollected,
+    required this.unreconciled,
+    required this.outstanding,
+  });
+
+  final double width;
+  final double expected;
+  final double verifiedCollected;
+  final double unreconciled;
+  final double outstanding;
+
+  double _segmentWidth(double value) {
+    if (expected <= 0 || value <= 0 || width <= 0) return 0;
+    return width * (value / expected);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final greenW = _segmentWidth(verifiedCollected);
+    final redW = _segmentWidth(unreconciled);
+    final orangeW = _segmentWidth(outstanding);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: SizedBox(
+        height: 24,
+        width: width,
+        child: Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            if (greenW > 0)
+              Positioned(
+                left: 0,
+                width: greenW,
+                top: 0,
+                bottom: 0,
+                child: const ColoredBox(color: AppColors.success),
+              ),
+            if (redW > 0)
+              Positioned(
+                left: greenW,
+                width: redW,
+                top: 0,
+                bottom: 0,
+                child: const ColoredBox(color: AppColors.danger),
+              ),
+            if (orangeW > 0)
+              Positioned(
+                left: greenW + redW,
+                width: orangeW,
+                top: 0,
+                bottom: 0,
+                child: const ColoredBox(color: AppColors.warning),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
